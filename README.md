@@ -12,7 +12,7 @@ The video shows what happens when jumping off a tall building before installing 
 </details>
 
 ### Installation
-- Download from [here](https://github.com/minipunch/improved-bike-falls/archive/v1.0.zip) (or visit the [repo](https://github.com/minipunch/improved-bike-falls))
+- Download from here.
 - Put the ``improved-bike-falls`` folder into your server's ``resources`` folder.
 - Add ``start improved-bike-falls`` to your server's ``server.cfg`` file.
 - Enjoy!
