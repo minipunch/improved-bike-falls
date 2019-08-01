@@ -19,6 +19,12 @@ local isRunningGetVehicleVelocityVectorAccelerations = false
 
 local NOT_FALL_CHANCE = 0.25
 
+RegisterNetEvent("bike:knockOff")
+AddEventHandler("bike:knockOff", function(force, wasFall)
+    local ped = PlayerPedId()
+    KnockFromVehicle(ped, GetVehiclePedIsIn(ped), force, wasFall)
+end)
+
 function CanBeKnockedOffVehicle(ped, veh)
     if IsPedInAnyVehicle(ped, true) then
         if GetVehicleClass(veh) == 13 or GetVehicleClass(veh) == 8 then 
@@ -33,8 +39,6 @@ end
 
 function KnockFromVehicle(ped, currVeh, force, wasFall)
     local prevCoords = GetEntityCoords(ped)
-    SetEntityCoords(prevCoords.x, prevCoords.y, prevCoords.z + 1.5)
-    SetEntityVelocity(ped, GetEntityVelocity(currVeh))
     local ragdollTime = 2000
     local healthToRemove = 15
     if wasFall and force > 200 then -- ragdoll longer if it was a big fall, collisions all ragdoll the same amount of time atm
@@ -45,6 +49,7 @@ function KnockFromVehicle(ped, currVeh, force, wasFall)
         end
     end
     SetPedToRagdoll(ped, ragdollTime, ragdollTime, 0, 0, 0, 0)
+    SetEntityVelocity(ped, GetEntityVelocity(currVeh))
     SetEntityHealth(ped, GetEntityHealth(ped) - healthToRemove)
     lastKnownAcceleration = 0
 end
@@ -82,38 +87,63 @@ end
 function PlayerFallOffBikeVelocityVectorAccelerationsCheck()
     local character = PlayerPedId()
     local currVeh = GetVehiclePedIsIn(character, false)
-    if CanBeKnockedOffVehicle(character, currVeh) then
-        local vehicleVelocityVectorAccelerations = GetVehicleVelocityVectorAccelerations(currVeh)
-        local single = math.abs(vehicleVelocityVectorAccelerations.x)
-        local single1 = math.abs(vehicleVelocityVectorAccelerations.y)
-        local single2 = math.abs(vehicleVelocityVectorAccelerations.z)
-        local num = single * single + single1 * single1
-        num = math.sqrt(num)
-        -- colliding with something --
-        local doCheck = (maxAllowedAccelerationBeforeFalloff ~= 0)
-        local doForceOff = num > maxAllowedAccelerationBeforeFalloff
-        if doCheck and doForceOff then 
-            --print("knocking off from collision, force: " .. num)
-            --TaskLeaveVehicle(character, currVeh, 16)
-            KnockFromVehicle(character, currVeh, num, false)
-        end
-        -- falling from a height --
-        doCheck = (maxAllowedUpDownAccelerationBeforeFallof ~= 0)
-        doForceOff = single2 > maxAllowedUpDownAccelerationBeforeFalloff
-        if doCheck and doForceOff then
-            local isLucky = single2 < 200 and (math.random() <= NOT_FALL_CHANCE) -- % chance of not falling when eligible to fall
-            if not isLucky then
-                --print("knocking off from height! force: " .. single2)
-                --TaskLeaveVehicle(character, currVeh, 16)
-                KnockFromVehicle(character, currVeh, single2, true)
+    if GetPedInVehicleSeat(currVeh, -1) == character then -- only check driver (since passenger would fall off randomly for some reason)
+        if CanBeKnockedOffVehicle(character, currVeh) then
+            local vehicleVelocityVectorAccelerations = GetVehicleVelocityVectorAccelerations(currVeh)
+            local single = math.abs(vehicleVelocityVectorAccelerations.x)
+            local single1 = math.abs(vehicleVelocityVectorAccelerations.y)
+            local single2 = math.abs(vehicleVelocityVectorAccelerations.z)
+            local num = single * single + single1 * single1
+            num = math.sqrt(num)
+            -- colliding with something --
+            local doCheck = (maxAllowedAccelerationBeforeFalloff ~= 0)
+            local doForceOff = num > maxAllowedAccelerationBeforeFalloff
+            if doCheck and doForceOff then 
+                --print("knocking off from collision, force: " .. num)
+                KnockFromVehicle(character, currVeh, num, false)
+                local id = GetClosestPlayerID(character)
+                if id then
+                    TriggerServerEvent("bike:knockOff", id, num, false)
+                end
+            end
+            -- falling from a height --
+            doCheck = (maxAllowedUpDownAccelerationBeforeFallof ~= 0)
+            doForceOff = single2 > maxAllowedUpDownAccelerationBeforeFalloff
+            if doCheck and doForceOff then
+                local isLucky = single2 < 200 and (math.random() <= NOT_FALL_CHANCE) -- % chance of not falling when eligible to fall
+                if not isLucky then
+                    --print("knocking off from height! force: " .. single2)
+                    KnockFromVehicle(character, currVeh, single2, true)
+                    local id = GetClosestPlayerID(character)
+                    if id then
+                        TriggerServerEvent("bike:knockOff", id, single2, true)
+                    end
+                end
             end
         end
     end
 end
 
 Citizen.CreateThread(function()
-    while true do 
+    while true do
         PlayerFallOffBikeVelocityVectorAccelerationsCheck()
         Wait(1)
     end
 end)
+
+function GetClosestPlayerID(myPed)
+    local returnID = nil
+    local players = GetActivePlayers()
+    for i = 1, #players do 
+        local otherPed = GetPlayerPed(players[i])
+        if otherPed ~= myPed then 
+            local myCoords = GetEntityCoords(myPed)
+            local otherCoords = GetEntityCoords(otherPed)
+            if Vdist(myCoords.x, myCoords.y, myCoords.z, otherCoords.x, otherCoords.y, otherCoords.z) <= 2.0 then 
+                returnID = GetPlayerServerId(players[i])
+                break
+            end
+        end
+    end
+    return returnID
+end
