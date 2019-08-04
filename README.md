@@ -3,6 +3,11 @@ A script that aims to improve on the default GTA V motorbike/bicycle falling and
 
 <small>This is a converted and modified version of https://www.gta5-mods.com/scripts/realistic-bike-and-quad-falloff from gta5-mods. Thanks to the author of that script for most of the force/acceleration calculation stuff.</small>
 
+### Features
+ - Fall off easier when colliding with things
+- Fall off easier when jumping from tall heights to an abrupt landing
+- Inflicts a bit of health damage for the latter case mentioned above
+
 <details>
 <summary>Demonstration Video</summary>
 
