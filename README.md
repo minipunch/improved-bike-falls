@@ -7,6 +7,7 @@ A script that aims to improve on the default GTA V motorbike/bicycle falling and
  - Fall off easier when colliding with things
 - Fall off easier when jumping from tall heights to an abrupt landing
 - Inflicts a bit of health damage for the latter case mentioned above
+- Works for motorcycles, quads, and bicycles
 
 <details>
 <summary>Demonstration Video</summary>
