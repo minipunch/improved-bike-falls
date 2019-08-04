@@ -1,5 +1,5 @@
 # Improved Bike Fall Physics
-A script that aims to improve on the default GTA V motorbike/bicycle falling and collision physics by making it easier to fall off when colliding with things as well as falling off and inflicting damage when doing something like jumping off a tall building.
+A script that aims to improve on the default GTA V motorbike/bicycle falling and collision physics.
 
 <small>This is a converted and modified version of https://www.gta5-mods.com/scripts/realistic-bike-and-quad-falloff from gta5-mods. Thanks to the author of that script for most of the force/acceleration calculation stuff.</small>
 
