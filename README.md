@@ -12,7 +12,7 @@ A script that aims to improve on the default GTA V motorbike/bicycle falling and
 <details>
 <summary>Demonstration Video</summary>
 
-https://www.youtube.com/watch?v=64svfPDHASo
+https://www.youtube.com/watch?v=VYOWuaY0k3U
 
 The video shows what happens when jumping off a tall building before installing the script and after.
 </details>
