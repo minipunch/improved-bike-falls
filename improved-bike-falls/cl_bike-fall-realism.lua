@@ -1,6 +1,6 @@
 --[[
     Converted for FiveM and slightly modified by minipunch for USA REALISM RP (https://usarrp.net). Makes people fall off bicycles and motorcycles easier than by default GTA standards as in real life.
-    I just added things like the percent chance to fall when jumping from small-moderate heights and instead of using the for some reason seemingly non-working "KnockPedOffVehicle" native it _was_ using I just TP the player out of the vehicle instead among some other things.
+    I just added things like the percent chance to fall when jumping from small-moderate heights and instead of using the for some reason seemingly non-working "KnockPedOffVehicle" native it _was_ using I just ragdoll the player out of the vehicle instead among some other things.
 
     From original author at GTA5-mods.com:
     The mod detects high forces that impact your vehicle by looking at the acceleration and negativ acceleration values.
